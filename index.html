@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación Semanal - Producción Farmacéutica</title>
+    <!-- Tailwind CSS para los estilos (Diseño limpio y médico) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pharma: {
+                            blue: '#1e3a8a',
+                            light: '#eff6ff',
+                            accent: '#3b82f6',
+                            green: '#10b981'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos específicos para la impresión */
+        @media print {
+            body { background-color: white; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .shadow-md { box-shadow: none !important; }
+            .border-print { border: 1px solid #e5e7eb; }
+            .page-break { page-break-before: always; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800 min-h-screen">
+
+    <!-- Navegación -->
+    <nav class="bg-pharma-blue text-white shadow-lg no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-flask-vial text-2xl"></i>
+                    <span class="font-bold text-xl tracking-wide">FarmaDoc | Producción</span>
+                </div>
+                <div>
+                    <span class="text-sm bg-white/20 px-3 py-1 rounded-full"><i class="fa-solid fa-location-dot mr-1"></i> Sede Venezuela</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor Principal -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- Columna Izquierda: Formulario (Oculto en impresión) -->
+        <div class="w-full lg:w-2/3 no-print">
+            
+            <!-- Tarjeta de Información Predefinida -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-6 border-l-4 border-pharma-blue">
+                <h2 class="text-lg font-bold text-pharma-blue mb-4 border-b pb-2">Información del Procedimiento Estándar</h2>
+                
+                <div class="space-y-4 text-sm text-gray-600">
+                    <div>
+                        <h3 class="font-semibold text-gray-800"><i class="fa-solid fa-bullseye text-pharma-accent w-5"></i> Objetivo:</h3>
+                        <p class="ml-6">Establecer los lineamientos y dejar registro documental de las operaciones rutinarias semanales en el área de producción, garantizando el cumplimiento de las Buenas Prácticas de Manufactura (BPM) y las normativas del INHRR.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800"><i class="fa-solid fa-microscope text-pharma-accent w-5"></i> Alcance:</h3>
+                        <p class="ml-6">Aplica a todos los procesos operativos de las áreas de Pesada, Mezclado, Compresión, Recubrimiento y Empaque (Primario y Secundario) dentro de la planta.</p>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800"><i class="fa-solid fa-users text-pharma-accent w-5"></i> Responsabilidades:</h3>
+                        <ul class="ml-6 list-disc list-inside">
+                            <li><strong>Operador:</strong> Ejecutar y documentar el paso a paso de manera veraz y en tiempo real.</li>
+                            <li><strong>Supervisor de Producción:</strong> Revisar, verificar y firmar el reporte semanal.</li>
+                            <li><strong>Aseguramiento de Calidad (AC):</strong> Auditar el cumplimiento del procedimiento.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta de Ingreso de Datos -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">Registro de Procedimiento Semanal</h2>
+                    <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded font-semibold border border-yellow-200">En elaboración</span>
+                </div>
+
+                <!-- Mensaje de éxito oculto por defecto -->
+                <div id="success-message" class="hidden mb-4 p-4 bg-green-100 border-l-4 border-pharma-green text-green-700 rounded-r shadow-sm fade-in">
+                    <i class="fa-solid fa-check-circle mr-2"></i> Documento guardado exitosamente.
+                </div>
+
+                <form id="sop-form">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Semana de Producción <span class="text-red-500">*</span></label>
+                            <input type="week" id="week-input" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pharma-accent focus:border-pharma-accent outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Proceso / Equipo <span class="text-red-500">*</span></label>
+                            <select id="process-select" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pharma-accent focus:border-pharma-accent outline-none bg-white">
+                                <option value="" disabled selected>Seleccione un proceso...</option>
+                                <option value="Pesada y Dispensación">Pesada y Dispensación</option>
+                                <option value="Mezclado de Polvos">Mezclado de Polvos</option>
+                                <option value="Compresión de Tabletas">Compresión de Tabletas</option>
+                                <option value="Recubrimiento">Recubrimiento</option>
+                                <option value="Llenado de Líquidos">Llenado de Líquidos</option>
+                                <option value="Empaque Primario (Blíster)">Empaque Primario (Blíster)</option>
+                                <option value="Empaque Secundario (Estuchado)">Empaque Secundario (Estuchado)</option>
+                                <option value="Limpieza de Área (Despeje de Línea)">Limpieza de Área (Despeje de Línea)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Operador Responsable <span class="text-red-500">*</span></label>
+                        <input type="text" id="operator-input" placeholder="Ej. Juan Pérez" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pharma-accent focus:border-pharma-accent outline-none transition-colors">
+                    </div>
+
+                    <hr class="my-6 border-gray-200">
+
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Descripción del Paso a Paso</h3>
+                        <p class="text-xs text-gray-500">Describa las acciones realizadas en orden cronológico.</p>
+                    </div>
+
+                    <!-- Contenedor de Pasos -->
+                    <div id="steps-container" class="space-y-4 mb-6">
+                        <!-- Los pasos se insertan aquí vía JS -->
+                    </div>
+
+                    <button type="button" onclick="addStep()" class="w-full py-2 border-2 border-dashed border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 hover:text-pharma-blue hover:border-pharma-blue transition-colors font-medium flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Agregar nuevo paso
+                    </button>
+
+                    <div class="mt-8 flex justify-end gap-3">
+                        <button type="button" onclick="clearForm()" class="px-5 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Limpiar</button>
+                        <button type="submit" class="px-5 py-2 bg-pharma-blue text-white rounded-lg hover:bg-blue-800 shadow-md transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-save"></i> Guardar Documento
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Historial y Vista Previa (Oculto en impresión) -->
+        <div class="w-full lg:w-1/3 no-print">
+            <div class="bg-white rounded-xl shadow-md p-6 sticky top-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-folder-open text-pharma-accent"></i> Documentos Recientes
+                </h2>
+                
+                <div id="empty-history" class="text-center py-8 text-gray-500">
+                    <i class="fa-solid fa-file-circle-xmark text-4xl mb-2 text-gray-300"></i>
+                    <p class="text-sm">No hay documentos guardados aún.</p>
+                </div>
+
+                <div id="history-container" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+                    <!-- Los documentos guardados se insertan aquí vía JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ÁREA DE IMPRESIÓN (Oculta en pantalla, visible al imprimir) -->
+    <div id="print-area" class="hidden print-only max-w-4xl mx-auto p-8 bg-white text-black">
+        <!-- El contenido para imprimir se generará aquí vía JS -->
+    </div>
+
+    <!-- Script de lógica de la aplicación -->
+    <script>
+        // Estado de la aplicación
+        let stepCount = 0;
+        let savedDocuments = [];
+
+        // Elementos del DOM
+        const stepsContainer = document.getElementById('steps-container');
+        const sopForm = document.getElementById('sop-form');
+        const historyContainer = document.getElementById('history-container');
+        const emptyHistory = document.getElementById('empty-history');
+        const printArea = document.getElementById('print-area');
+        const successMessage = document.getElementById('success-message');
+
+        // Inicializar con un paso
+        window.onload = () => {
+            addStep();
+            
+            // Setear la semana actual por defecto
+            const now = new Date();
+            const year = now.getFullYear();
+            const week = getWeekNumber(now);
+            document.getElementById('week-input').value = `${year}-W${week.toString().padStart(2, '0')}`;
+        };
+
+        // Función para obtener el número de semana ISO
+        function getWeekNumber(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+            return weekNo;
+        }
+
+        // Agregar un nuevo paso al formulario
+        function addStep() {
+            stepCount++;
+            const stepId = `step-${Date.now()}`;
+            
+            const stepHTML = `
+                <div id="${stepId}" class="fade-in bg-pharma-light border border-blue-100 p-4 rounded-lg relative group">
+                    <div class="flex items-start gap-3">
+                        <div class="bg-pharma-blue text-white rounded-full w-8 h-8 flex items-center justify-center font-bold flex-shrink-0 mt-1">
+                            ${stepCount}
+                        </div>
+                        <div class="flex-grow">
+                            <textarea required rows="2" placeholder="Describa la acción realizada en este paso..." class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-pharma-accent focus:border-pharma-accent outline-none resize-none text-sm step-description"></textarea>
+                        </div>
+                        <button type="button" onclick="removeStep('${stepId}')" class="text-red-400 hover:text-red-600 transition-colors p-2" title="Eliminar paso">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            stepsContainer.insertAdjacentHTML('beforeend', stepHTML);
+            updateStepNumbers();
+        }
+
+        // Eliminar un paso
+        function removeStep(id) {
+            if (document.querySelectorAll('#steps-container > div').length > 1) {
+                const stepEl = document.getElementById(id);
+                stepEl.style.opacity = '0';
+                stepEl.style.transform = 'translateY(-10px)';
+                stepEl.style.transition = 'all 0.2s';
+                
+                setTimeout(() => {
+                    stepEl.remove();
+                    updateStepNumbers();
+                }, 200);
+            } else {
+                showMessage("Debe existir al menos un paso en el procedimiento.", "error");
+            }
+        }
+
+        // Actualizar numeración visual de los pasos
+        function updateStepNumbers() {
+            const steps = stepsContainer.querySelectorAll('#steps-container > div');
+            stepCount = steps.length;
+            steps.forEach((step, index) => {
+                step.querySelector('.bg-pharma-blue').innerText = index + 1;
+            });
+        }
+
+        // Mostrar mensajes temporales
+        function showMessage(msg, type = "success") {
+            successMessage.innerHTML = type === "success" 
+                ? `<i class="fa-solid fa-check-circle mr-2"></i> ${msg}`
+                : `<i class="fa-solid fa-circle-exclamation mr-2"></i> ${msg}`;
+            
+            successMessage.className = type === "success"
+                ? "mb-4 p-4 bg-green-100 border-l-4 border-pharma-green text-green-700 rounded-r shadow-sm fade-in block"
+                : "mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-r shadow-sm fade-in block";
+            
+            setTimeout(() => {
+                successMessage.classList.add('hidden');
+                successMessage.classList.remove('block');
+            }, 3000);
+        }
+
+        // Limpiar formulario completo
+        function clearForm() {
+            document.getElementById('process-select').value = "";
+            document.getElementById('operator-input').value = "";
+            stepsContainer.innerHTML = '';
+            stepCount = 0;
+            addStep();
+        }
+
+        // Manejar el envío del formulario (Guardar)
+        sopForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const week = document.getElementById('week-input').value;
+            const process = document.getElementById('process-select').value;
+            const operator = document.getElementById('operator-input').value;
+            
+            // Recopilar pasos
+            const stepElements = document.querySelectorAll('.step-description');
+            const descriptions = Array.from(stepElements).map(el => el.value.trim()).filter(val => val !== "");
+
+            if (descriptions.length === 0) {
+                showMessage("Los pasos no pueden estar vacíos.", "error");
+                return;
+            }
+
+            // Crear objeto documento
+            const newDoc = {
+                id: 'DOC-' + Date.now().toString().slice(-6),
+                date: new Date().toLocaleDateString('es-VE'),
+                week: week,
+                process: process,
+                operator: operator,
+                steps: descriptions
+            };
+
+            // Guardar en array en memoria (Se podría usar localStorage si se requiere persistencia)
+            savedDocuments.unshift(newDoc);
+            
+            // Actualizar UI
+            renderHistory();
+            showMessage("Documento guardado exitosamente.");
+            clearForm();
+        });
+
+        // Renderizar el historial en la columna derecha
+        function renderHistory() {
+            if (savedDocuments.length === 0) {
+                emptyHistory.style.display = 'block';
+                historyContainer.innerHTML = '';
+                return;
+            }
+
+            emptyHistory.style.display = 'none';
+            historyContainer.innerHTML = '';
+
+            savedDocuments.forEach(doc => {
+                const card = document.createElement('div');
+                card.className = "bg-gray-50 border border-gray-200 rounded-lg p-4 hover:border-pharma-accent hover:shadow-md transition-all cursor-pointer fade-in";
+                
+                // Formatear semana para visualización amigable
+                const [yyyy, w] = doc.week.split('-W');
+                const weekDisplay = `Semana ${w}, ${yyyy}`;
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-bold text-pharma-blue bg-blue-100 px-2 py-1 rounded">${doc.id}</span>
+                        <span class="text-xs text-gray-500"><i class="fa-regular fa-calendar"></i> ${doc.date}</span>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-1">${doc.process}</h4>
+                    <p class="text-xs text-gray-600 mb-3"><i class="fa-solid fa-user-tag w-4"></i> ${doc.operator}</p>
+                    <div class="flex gap-2">
+                        <button onclick="preparePrint('${doc.id}')" class="flex-1 text-xs py-1.5 bg-white border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition-colors">
+                            <i class="fa-solid fa-print"></i> Imprimir/Ver
+                        </button>
+                    </div>
+                `;
+                historyContainer.appendChild(card);
+            });
+        }
+
+        // Preparar la vista de impresión
+        function preparePrint(docId) {
+            const doc = savedDocuments.find(d => d.id === docId);
+            if (!doc) return;
+
+            const [yyyy, w] = doc.week.split('-W');
+
+            let stepsHTML = '';
+            doc.steps.forEach((step, index) => {
+                stepsHTML += `
+                    <tr>
+                        <td class="border border-gray-400 p-2 text-center w-12 font-bold">${index + 1}</td>
+                        <td class="border border-gray-400 p-2 text-sm">${step}</td>
+                        <td class="border border-gray-400 p-2 text-center w-24"></td>
+                    </tr>
+                `;
+            });
+
+            printArea.innerHTML = `
+                <div class="text-center mb-8 border-b-2 border-black pb-4">
+                    <h1 class="text-2xl font-bold uppercase tracking-wider">Laboratorios Farmacéuticos</h1>
+                    <h2 class="text-xl font-bold mt-2">Registro de Procedimiento Operativo Estándar</h2>
+                    <h3 class="text-lg mt-1 text-gray-700">Área de Producción</h3>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6 text-sm border border-gray-400 p-4">
+                    <div><strong>Documento No.:</strong> ${doc.id}</div>
+                    <div><strong>Fecha de Emisión:</strong> ${doc.date}</div>
+                    <div><strong>Semana Registrada:</strong> Semana ${w}, Año ${yyyy}</div>
+                    <div><strong>Proceso / Equipo:</strong> <span class="uppercase font-bold">${doc.process}</span></div>
+                    <div class="col-span-2"><strong>Operador Responsable:</strong> ${doc.operator}</div>
+                </div>
+
+                <div class="mb-6 text-sm text-justify">
+                    <p class="mb-2"><strong>1. OBJETIVO:</strong> Establecer los lineamientos y dejar registro documental de las operaciones rutinarias semanales en el área de producción, garantizando el cumplimiento de las Buenas Prácticas de Manufactura (BPM) en Venezuela y las normativas del INHRR.</p>
+                    <p class="mb-2"><strong>2. ALCANCE:</strong> Aplica a todos los procesos operativos de las áreas de Pesada, Mezclado, Compresión, Recubrimiento y Empaque (Primario y Secundario) dentro de la planta.</p>
+                    <p class="mb-2"><strong>3. RESPONSABILIDADES:</strong> Operador (Ejecución y registro), Supervisor de Producción (Revisión y verificación), Aseguramiento de la Calidad (Auditoría).</p>
+                </div>
+
+                <h3 class="font-bold text-lg mb-2 border-b border-black">4. DESCRIPCIÓN DEL PASO A PASO</h3>
+                <table class="w-full border-collapse border border-gray-400 mb-8">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border border-gray-400 p-2 text-sm">Paso</th>
+                            <th class="border border-gray-400 p-2 text-sm">Descripción de la Actividad Realizada</th>
+                            <th class="border border-gray-400 p-2 text-sm">Firma Operador</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${stepsHTML}
+                    </tbody>
+                </table>
+
+                <div class="mt-16 grid grid-cols-3 gap-8 text-center text-sm pt-8">
+                    <div>
+                        <div class="border-t border-black pt-2 mx-4"></div>
+                        <p class="font-bold mt-1">Realizado por</p>
+                        <p class="text-xs text-gray-600">${doc.operator} (Operador)</p>
+                        <p class="text-xs mt-1">Fecha: ___/___/20__</p>
+                    </div>
+                    <div>
+                        <div class="border-t border-black pt-2 mx-4"></div>
+                        <p class="font-bold mt-1">Revisado por</p>
+                        <p class="text-xs text-gray-600">Supervisor de Producción</p>
+                        <p class="text-xs mt-1">Fecha: ___/___/20__</p>
+                    </div>
+                    <div>
+                        <div class="border-t border-black pt-2 mx-4"></div>
+                        <p class="font-bold mt-1">Verificado por</p>
+                        <p class="text-xs text-gray-600">Aseguramiento de Calidad</p>
+                        <p class="text-xs mt-1">Fecha: ___/___/20__</p>
+                    </div>
+                </div>
+                
+                <div class="mt-12 text-xs text-center text-gray-500">
+                    Documento generado a través de FarmaDoc - Sistema de Cumplimiento BPM
+                </div>
+            `;
+
+            // Ejecutar impresión del navegador
+            window.print();
+        }
+    </script>
+</body>
+</html>
